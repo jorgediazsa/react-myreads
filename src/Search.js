@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-// import PropTypes from 'prop-types'
-// import escapeRegExp from 'escape-string-regexp'
+import PropTypes from 'prop-types'
 import sortBy from 'sort-by'
+import { debounce } from 'throttle-debounce';
 
 import Book from './Book'
 import * as BooksAPI from './utils/BooksAPI'
@@ -10,25 +10,32 @@ import * as BooksAPI from './utils/BooksAPI'
 class Search extends Component {
 
   static propTypes = {
-
+    currentlyReading: PropTypes.array.isRequired,
+    wantToRead: PropTypes.array.isRequired,
+    read: PropTypes.array.isRequired
   }
 
   state = {
     books: [],
     query: ''
   }
+  
+  constructor(){
+    super()
+    this.updateQuery = debounce(500, this.updateQuery)
+  }
 
   updateQuery = (query) => {
+    this.setState({ query })
     BooksAPI.search(query, 20)
       .then((books) => {
         this.setState({ books })
       })
-    this.setState({ query })
   }
 
   render() {
 
-    const { books, query } = this.state
+    const { books } = this.state
     const { moveBook, p, currentlyReading, wantToRead, read } = this.props
 
     if(books && books.length){
@@ -46,13 +53,11 @@ class Search extends Component {
             <input
               type="text"
               placeholder="Search by title or author"
-              value={query}
               onChange={(event) => this.updateQuery(event.target.value)}
             />
-
           </div>
         </div>
-        {books.length > 0 && (
+        {books && books.length > 0 && (
           <div className="search-books-results">
             <ol className="books-grid">
               {books.map((book) => (

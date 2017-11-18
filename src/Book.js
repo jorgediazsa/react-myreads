@@ -7,10 +7,6 @@ class Book extends Component {
     book: PropTypes.object.isRequired
   }
 
-  state = {
-
-  }
-
   findShelf(bookId) {
     const { currentlyReading, wantToRead, read } = this.props
     if(currentlyReading.find(book => book.id === bookId)){
