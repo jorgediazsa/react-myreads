@@ -23,7 +23,7 @@ class Search extends Component {
       .then((books) => {
         this.setState({ books })
       })
-    this.setState({ query: query.trim() })
+    this.setState({ query })
   }
 
   render() {
